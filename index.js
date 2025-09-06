@@ -43,15 +43,23 @@ const displayCategories = (categories) => {
 //news showing functionality
 
 const loadNewsByCategory = (categoryId) => {
+    loader()
     fetch(`https://news-api-fs.vercel.app/api/categories/${categoryId}`)
         .then(res => res.json())
         .then(news => {
             displayNewsByCategory(news.articles);
         })
+        .catch(error => showError())
 }
 
 const displayNewsByCategory = (articles) => {
+    console.log(articles.length);
+
     newsContainer.innerHTML = ""
+    if (articles.length === 0) {
+        showEmptyMessage()
+        return
+    }
     articles.forEach(article => {
         newsContainer.innerHTML += `
              <div id="${article.id}" class="border border-gray-100 p-2 flex flex-col justify-between">
@@ -80,18 +88,23 @@ newsContainer.addEventListener("click", (e) => {
         // const id = e.target.parentNode[0];
         const isPresent = bookMarks.find(obj => title === obj.title)
         if (isPresent === undefined) {
+            e.target.classList.remove('fa-regular')
+            e.target.classList.add('fa-solid')
             bookMarks.push({
                 id: id,
                 img: img,
                 title: title
             });
         }
+        else {
+            handleDeleteBookmark(id)
+            e.target.classList.add('fa-regular')
+            e.target.classList.remove('fa-solid')
+        }
         console.log(bookMarks);
 
         displayBookMarks(bookMarks)
         // console.log(bookMarks);
-
-
     }
 
 })
@@ -121,12 +134,31 @@ const handleDeleteBookmark = (id) => {
     const filterBookmarks = bookMarks.filter(deletNew => deletNew.id !== id
     )
     bookMarks = filterBookmarks;
-    console.log(bookMarks);
 
     displayBookMarks(bookMarks);
-    console.log("succes");
 
 }
+const loader = () => {
+    newsContainer.innerHTML = `
+        <div class="h-[75vh] col-span-3 flex items-center justify-center"><span
+                    class="loading loading-dots loading-xl"></span></div>
+    `
+}
+
+const showError = () => {
+    newsContainer.innerHTML = `
+     <div class="h-[75vh] col-span-3 flex items-center justify-center text-red-600">Something went wrong</div>
+    `
+}
+
+const showEmptyMessage = () => {
+    newsContainer.innerHTML = `
+     <div class="h-[75vh] col-span-3 flex items-center justify-center text-red-600">No news found for this category</div>
+    `
+}
+
+
+loader()
 
 loadNewsByCategory("main")
 
