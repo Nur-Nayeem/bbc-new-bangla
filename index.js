@@ -178,7 +178,7 @@ const displayDetaileNews = (id) => {
                     <h2 class="text-2xl font-bold">${title}</h2>
                     <img class="my-4 w-full" src="${img}" alt="news image">
                     <div class="my-2 text-xl font-medium">
-                        <h3>তাফসীর বাবু</h3>
+                        <h3>নূর নাঈম</h3>
                         <p>বিবিসি নিউজ বাংলা</p>
                     </div>
                     <p class="my-2">${timestamp}</p>
