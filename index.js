@@ -3,6 +3,7 @@ console.log("connencted");
 const categoriesContainer = document.getElementById("categories-container")
 const newsContainer = document.getElementById("news-container");
 const bookMarksContainer = document.getElementById("book-marks-container");
+const detailNewsContainer = document.getElementById("detail-news-box");
 
 let bookMarks = [];
 
@@ -62,9 +63,9 @@ const displayNewsByCategory = (articles) => {
     }
     articles.forEach(article => {
         newsContainer.innerHTML += `
-             <div id="${article.id}" class="border border-gray-100 p-2 flex flex-col justify-between">
-             <div>
-                <img src='${article.image.srcset[5].url}' alt="news-img">
+             <div id="${article.id}" class="border border-gray-100 p-2 flex flex-col justify-between w-full">
+             <div onclick="displayDetaileNews('${article.id}')">
+                <img class="w-full" src='${article.image.srcset[5].url}' alt="news-img">
                 <h2 class="text-xl font-medium my-2">${article.title}</h2>
             </div>
                 <div class="flex justify-between items-center px-2">
@@ -80,12 +81,10 @@ const displayNewsByCategory = (articles) => {
 
 newsContainer.addEventListener("click", (e) => {
     if (e.target.id === "bookmark-icon") {
-        // bookMarks.push()
         const img = e.target.parentNode.parentNode.children[0].children[0].src;
         const title = e.target.parentNode.parentNode.children[0].children[1].innerText;
         const id = e.target.parentNode.parentNode.id
 
-        // const id = e.target.parentNode[0];
         const isPresent = bookMarks.find(obj => title === obj.title)
         if (isPresent === undefined) {
             e.target.classList.remove('fa-regular')
@@ -101,10 +100,8 @@ newsContainer.addEventListener("click", (e) => {
             e.target.classList.add('fa-regular')
             e.target.classList.remove('fa-solid')
         }
-        console.log(bookMarks);
 
         displayBookMarks(bookMarks)
-        // console.log(bookMarks);
     }
 
 })
@@ -115,11 +112,11 @@ const displayBookMarks = (bookMarks) => {
     bookMarks.forEach(news => (
         bookMarksContainer.innerHTML += `
             <div class="bg-slate-50 rounded-sm">
-                    <div class="flex gap-2">
+                    <div class="flex gap-2" onclick="displayDetaileNews('${news.id}')">
                         <img class="w-2/5" src="${news.img}" alt="">
-                        <a href="">
+                        
                             <h2 class="text-2xl">${news.title.toString().slice(0, 32).concat("...")}</h2>
-                        </a>
+                        
                     </div>
                     <div class="w-full flex justify-end">
                         <button onclick="handleDeleteBookmark('${news.id}')" class="py-1 px-2 bg-gray-100 rounded-sm text-red-600 cursor-pointer">delete</button>
@@ -155,6 +152,48 @@ const showEmptyMessage = () => {
     newsContainer.innerHTML = `
      <div class="h-[75vh] col-span-3 flex items-center justify-center text-red-600">No news found for this category</div>
     `
+}
+
+
+const displayDetaileNews = (id) => {
+
+    detailNewsContainer.innerHTML = `
+    <div class="h-[75vh] col-span-3 flex items-center justify-center"><span
+                    class="loading loading-dots loading-xl"></span></div>
+    `
+    fetch(`https://news-api-fs.vercel.app/api/news/${id}`)
+        .then(res => res.json())
+        .then((news) => {
+            console.log(news.article.content);
+            let title = news.article.title;
+            let img = news.article.images[0].url;
+            let timestamp = news.article.timestamp;
+            let content1st = news.article.content[0];
+
+            let [, ...content] = news.article.content;
+
+
+            detailNewsContainer.innerHTML = `
+             <div id="modalContainer" class="">
+                    <h2 class="text-2xl font-bold">${title}</h2>
+                    <img class="my-4 w-full" src="${img}" alt="news image">
+                    <div class="my-2 text-xl font-medium">
+                        <h3>তাফসীর বাবু</h3>
+                        <p>বিবিসি নিউজ বাংলা</p>
+                    </div>
+                    <p class="my-2">${timestamp}</p>
+                    <div>
+                        <h4 class="text-lg font-medium my-2">${content1st}</h4>
+                        <p class="text-lg text-justify">${content}</p>
+                    </div>
+                </div>
+                
+     `
+        }
+        )
+
+
+    detailsNews.showModal()
 }
 
 
