@@ -174,7 +174,7 @@ const displayDetaileNews = (id) => {
 
 
             detailNewsContainer.innerHTML = `
-             <div id="modalContainer" class="">
+             <div id="modalContainer" class="w-full">
                     <h2 class="text-2xl font-bold">${title}</h2>
                     <img class="my-4 w-full" src="${img}" alt="news image">
                     <div class="my-2 text-xl font-medium">
@@ -184,7 +184,7 @@ const displayDetaileNews = (id) => {
                     <p class="my-2">${timestamp}</p>
                     <div>
                         <h4 class="text-lg font-medium my-2">${content1st}</h4>
-                        <p class="text-lg text-justify">${content}</p>
+                        <p class="text-lg text-justify">${content.join("<br><br>")}</p>
                     </div>
                 </div>
                 
